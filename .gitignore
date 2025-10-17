@@ -1,0 +1,46 @@
+# === Python ===
+__pycache__/
+*.py[cod]
+*$py.class
+
+# === Virtual Environments ===
+# (Ignore common virtual environment folders)
+env/
+venv/
+.venv/
+ENV/
+.ENV/
+venv.bak/
+env.bak/
+
+# === Packages and Dependencies ===
+# Ignore installed libraries
+site-packages/
+*.egg-info/
+*.egg
+dist/
+build/
+.eggs/
+pip-wheel-metadata/
+
+# === Jupyter and Cache Files ===
+.ipynb_checkpoints
+.pytest_cache/
+.tox/
+.coverage
+*.cover
+*.log
+*.pot
+*.mo
+
+# === IDE and OS Files ===
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# === Environment and Secrets ===
+*.env
+*.env.*
+.envrc
+.env.local
