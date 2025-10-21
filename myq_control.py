@@ -200,8 +200,12 @@ class MyQController:
 async def main():
     """Example usage of MyQController"""
     # Replace with your MyQ credentials
-    EMAIL = "example"
-    PASSWORD = "Myq!2358"
+    import os
+    EMAIL = os.environ.get("MYQ_EMAIL", "example")
+    PASSWORD = os.environ.get("MYQ_PASSWORD")
+    if not PASSWORD:
+        print("Error: MYQ_PASSWORD environment variable not set.")
+        return
 
     controller = MyQController(EMAIL, PASSWORD)
 
