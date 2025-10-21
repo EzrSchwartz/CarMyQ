@@ -9,26 +9,27 @@ from torchvision import transforms
 from open_gopro import WiredGoPro
 from open_gopro.models.constants import Toggle
 from transformers import SegformerFeatureExtractor, SegformerForSemanticSegmentation
+from transformers import AutoImageProcessor, AutoModelForSemanticSegmentation
+
 from PIL import Image
 
 
 # ==============================
 # CONFIGURATION
 # ==============================
-extractor = SegformerFeatureExtractor.from_pretrained("nvidia/segformer-b0-finetuned-ade-512-512")
-model = SegformerForSemanticSegmentation.from_pretrained("nvidia/segformer-b0-finetuned-ade-512-512")
 
-# Car class ID in ADE20K dataset (class 21 is 'car')
-CAR_CLASS_ID = 21
+extractor = AutoImageProcessor.from_pretrained("nvidia/segformer-b0-finetuned-cityscapes-1024-1024")
+model = AutoModelForSemanticSegmentation.from_pretrained("nvidia/segformer-b0-finetuned-cityscapes-1024-1024")
+CAR_CLASS_ID = 13  # for Cityscapes, class 13 = car
 
 # Choose mode: "livestream" or "video"
 MODE = "video"  # Change to "livestream" for GoPro streaming
-VIDEO_PATH = "path/to/your/video.mp4"  # Path to your MP4 file
+VIDEO_PATH = r'C:\Users\ezran\OneDrive\Desktop\GX010082.MP4' # Path to your MP4 file
 
 SAVE_DIR = "segmented_gopro_dataset"
 IMG_SIZE = (256, 256)  # must match your model's input size
 SHOW_OVERLAY = True    # show real-time overlay
-SAVE_INTERVAL = 5      # save every Nth frame to limit data size
+SAVE_INTERVAL = 1     # save every Nth frame to limit data size
 
 # ==============================
 # SETUP
