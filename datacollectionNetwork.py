@@ -12,7 +12,7 @@ from transformers import SegformerFeatureExtractor, SegformerForSemanticSegmenta
 from transformers import AutoImageProcessor, AutoModelForSemanticSegmentation
 
 from PIL import Image
-
+from resnetclassification import classify
 
 # ==============================
 # CONFIGURATION
@@ -121,16 +121,7 @@ async def stream_and_segment_livestream():
                 if frame_idx % SAVE_INTERVAL == 0:
                     # Only save if car is detected in the frame
                     if car_mask.sum() > 0:
-                        frame_path = f"{SAVE_DIR}/frames/frame_{frame_idx:05d}.png"
-                        mask_path = f"{SAVE_DIR}/labels/mask_{frame_idx:05d}.png"
-                        cv2.imwrite(frame_path, frame)
-                        # Save the binary car mask (0 or 255)
-                        cv2.imwrite(mask_path, car_mask * 255)
-                        print(f"💾 Saved frame {frame_idx}: {frame_path} (car detected: {car_mask.sum()} pixels)")
-                    else:
-                        print(f"⏭️  Skipped frame {frame_idx}: No car detected")
-
-                frame_idx += 1
+                        classify(frame)
 
                 if cv2.waitKey(1) & 0xFF == ord('q'):
                     break
@@ -246,3 +237,5 @@ if __name__ == "__main__":
         asyncio.run(stream_and_segment_livestream())
     else:
         print(f"❌ Invalid MODE: {MODE}. Use 'video' or 'livestream'")
+
+
