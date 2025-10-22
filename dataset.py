@@ -14,15 +14,9 @@ class PriusData(Dataset):
             img_dir (str): Directory containing all the images.
             transform (callable, optional): Optional transform to be applied on a sample.
         """
-        self.img_labels = pd.read_csv(annotations_file)
         self.img_dir = img_dir
         self.transform = transform
 
-    def __len__(self):
-        """
-        Returns the total number of samples in the dataset.
-        """
-        return len(self.img_labels)
 
     def __getitem__(self, idx):
         """
@@ -32,7 +26,10 @@ class PriusData(Dataset):
         Returns:
             tuple: (image, label)
         """
-        img_path = os.path.join(self.img_dir, self.img_labels.iloc[idx, 0])
+        entries = os.listdir(self.img_dir)
+
+        
+        img_path = os.path.join(self.img_dir, entries[idx])
         image = Image.open(img_path).convert("RGB") # Open image and ensure RGB format
         label = "prius"
 
@@ -51,15 +48,10 @@ class ConnieData(Dataset):
             img_dir (str): Directory containing all the images.
             transform (callable, optional): Optional transform to be applied on a sample.
         """
-        self.img_labels = pd.read_csv(annotations_file)
         self.img_dir = img_dir
         self.transform = transform
 
-    def __len__(self):
-        """
-        Returns the total number of samples in the dataset.
-        """
-        return len(self.img_labels)
+
 
     def __getitem__(self, idx):
         """
@@ -69,7 +61,10 @@ class ConnieData(Dataset):
         Returns:
             tuple: (image, label)
         """
-        img_path = os.path.join(self.img_dir, self.img_labels.iloc[idx, 0])
+        entries = os.listdir(self.img_dir)
+
+        
+        img_path = os.path.join(self.img_dir, entries[idx])
         image = Image.open(img_path).convert("RGB") # Open image and ensure RGB format
         label = "Connie"
 
@@ -79,7 +74,7 @@ class ConnieData(Dataset):
         return image, label
 
 class E63Data(Dataset):
-    def __init__(self, annotations_file, img_dir, transform=None):
+    def __init__(self, img_dir, transform=None):
         """
         Initializes the dataset.
         Args:
@@ -87,15 +82,10 @@ class E63Data(Dataset):
             img_dir (str): Directory containing all the images.
             transform (callable, optional): Optional transform to be applied on a sample.
         """
-        self.img_labels = pd.read_csv(annotations_file)
         self.img_dir = img_dir
         self.transform = transform
 
-    def __len__(self):
-        """
-        Returns the total number of samples in the dataset.
-        """
-        return len(self.img_labels)
+
 
     def __getitem__(self, idx):
         """
@@ -105,7 +95,10 @@ class E63Data(Dataset):
         Returns:
             tuple: (image, label)
         """
-        img_path = os.path.join(self.img_dir, self.img_labels.iloc[idx, 0])
+        entries = os.listdir(self.img_dir)
+
+        
+        img_path = os.path.join(self.img_dir, entries[idx])   
         image = Image.open(img_path).convert("RGB") # Open image and ensure RGB format
         label = "e63"
 
@@ -116,7 +109,7 @@ class E63Data(Dataset):
 
 
 class OtherData(Dataset):
-    def __init__(self, annotations_file, img_dir, transform=None):
+    def __init__(self, img_dir, transform=None):
         """
         Initializes the dataset.
         Args:
@@ -124,15 +117,9 @@ class OtherData(Dataset):
             img_dir (str): Directory containing all the images.
             transform (callable, optional): Optional transform to be applied on a sample.
         """
-        self.img_labels = pd.read_csv(annotations_file)
         self.img_dir = img_dir
         self.transform = transform
 
-    def __len__(self):
-        """
-        Returns the total number of samples in the dataset.
-        """
-        return len(self.img_labels)
 
     def __getitem__(self, idx):
         """
@@ -142,7 +129,10 @@ class OtherData(Dataset):
         Returns:
             tuple: (image, label)
         """
-        img_path = os.path.join(self.img_dir, self.img_labels.iloc[idx, 0])
+        entries = os.listdir(self.img_dir)
+
+        
+        img_path = os.path.join(self.img_dir, entries[idx])
         image = Image.open(img_path).convert("RGB") # Open image and ensure RGB format
         label = "other"
 
@@ -152,10 +142,10 @@ class OtherData(Dataset):
         return image, label
 
 
-priusdataset = PriusData(img_dir='path/to/prius/images', transform=transforms.ToTensor())
-conniedataset = ConnieData(img_dir='path/to/connie/images', transform=transforms.ToTensor())
-e63dataset = E63Data(annotations_file='path/to/e63/annotations.csv', img_dir='path/to/e63/images', transform=transforms.ToTensor())
-otherdataset = OtherData(annotations_file='path/to/other/annotations.csv', img_dir='path/to/other, images', transform=transforms.ToTensor())
+priusdataset = PriusData(img_dir='D:\VehiclesData\Prius\frames', transform=transforms.ToTensor())
+conniedataset = ConnieData(img_dir='D:\VehiclesData\Connie\frames', transform=transforms.ToTensor())
+e63dataset = E63Data(img_dir='D:\VehiclesData\E63\frames', transform=transforms.ToTensor())
+otherdataset = OtherData(img_dir='D:\VehiclesData\Other\frames', transform=transforms.ToTensor())
 
 combined_dataset = torch.utils.data.ConcatDataset([priusdataset, conniedataset, e63dataset, otherdataset])
 dataset = torch.utils.data.DataLoader(combined_dataset, batch_size=32, shuffle=True)

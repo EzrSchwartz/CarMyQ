@@ -134,7 +134,7 @@ def ResNet152(num_classes, channels=3):
     return ResNet(Bottleneck, [3,8,36,3], 4, 3)
 
 
-def classify(frame)
+def classify(frame):
     """
     Classifies the input frame using a pre-trained ResNet model.
     Args:
