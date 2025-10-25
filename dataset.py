@@ -149,10 +149,10 @@ class OtherData(Dataset):
         return image, label
 
 
-priusdataset = PriusData(img_dir=r"D:\VehiclesData\Prius\frames", transform=transforms.ToTensor())
+priusdataset = PriusData(img_dir=r"/home/ec2-user/VehiclesData/Prius/frames", transform=transforms.ToTensor())
 # conniedataset = ConnieData(img_dir=r"D:\VehiclesData\Connie\frames", transform=transforms.ToTensor())
 # e63dataset = E63Data(img_dir=r"D:\VehiclesData\E63\frames", transform=transforms.ToTensor())
-otherdataset = OtherData(img_dir=r"D:\VehiclesData\Other\frames", transform=transforms.ToTensor())
+otherdataset = OtherData(img_dir=r"/home/ec2-user/VehiclesData/Other/frames", transform=transforms.ToTensor())
 
 # combined_dataset = torch.utils.data.ConcatDataset([priusdataset, conniedataset, e63dataset, otherdataset])
 combined_dataset = torch.utils.data.ConcatDataset([priusdataset, otherdataset])
