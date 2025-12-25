@@ -38,7 +38,7 @@ VIDEO_PATH = r'c:\Users\ezran\OneDrive\Desktop\GX010084.MP4' # Path to your MP4 
 SAVE_DIR = "D:\VehiclesData\Other"
 IMG_SIZE = (256, 256)  # must match your model's input size
 SHOW_OVERLAY = True    # show real-time overlay
-SAVE_INTERVAL = 5      # save every Nth frame to limit data size
+SAVE_INTERVAL = 1     # save every Nth frame to limit data size
 
 # ==============================
 # SETUP
@@ -127,19 +127,10 @@ async def stream_and_segment_livestream():
                     cv2.imshow('Segmented Stream', frame)
 
                 # --- Save every Nth frame (only if car is detected) ---
-                if frame_idx % SAVE_INTERVAL == 0:
+                if frame_idx % SAVE_INTERVAL == 5:
                     # Only save if car is detected in the frame
                     if car_mask.sum() > 0:
-                        frame_path = f"{SAVE_DIR}/frames/frame_{frame_idx:05d}.png"
-                        mask_path = f"{SAVE_DIR}/labels/mask_{frame_idx:05d}.png"
-                        cv2.imwrite(frame_path, frame)
-                        # Save the binary car mask (0 or 255)
-                        cv2.imwrite(mask_path, car_mask * 255)
-                        print(f"💾 Saved frame {frame_idx}: {frame_path} (car detected: {car_mask.sum()} pixels)")
-                    else:
-                        print(f"⏭️  Skipped frame {frame_idx}: No car detected")
-
-                frame_idx += 1
+                        classify(frame)
 
                 if cv2.waitKey(1) & 0xFF == ord('q'):
                     break
@@ -200,12 +191,21 @@ def process_video_file():
                     align_corners=False
                 )
 
-                # Get predicted class for each pixel
-                full_mask = upsampled_logits.argmax(dim=1).squeeze().cpu().numpy()
+                                # Get predicted class for each pixel
+                                # Convert logits to probabilities (softmax along class dimension)
+                probs = torch.nn.functional.softmax(upsampled_logits, dim=1)
+
+                # Extract the probability map for the "car" class
+                car_probs = probs[0, CAR_CLASS_ID, :, :].cpu().numpy()
+
+                # Apply your confidence threshold (e.g., 0.8 = 80%)
+                CONF_THRESHOLD = 0.8
+                car_mask = (car_probs > CONF_THRESHOLD).astype(np.uint8)
+                # full_mask = upsampled_logits.argmax(dim=1).squeeze().cpu().numpy()
 
             # --- Filter for car class only ---
             # Create binary mask: 1 where car is detected, 0 otherwise
-            car_mask = (full_mask == CAR_CLASS_ID).astype(np.uint8)
+            # car_mask = (full_mask == CAR_CLASS_ID).astype(np.uint8)
 
             # --- Convert mask to uint8 for visualization ---
             # Scale to 0-255 for better visibility
@@ -224,15 +224,31 @@ def process_video_file():
             # --- Save every Nth frame (only if car is detected) ---
             if frame_idx % SAVE_INTERVAL == 0:
                 # Only save if car is detected in the frame
-                if car_mask.sum() > 0:
-                    frame_path = f"{SAVE_DIR}/frames/frame_{frame_idx:05d}.png"
-                    mask_path = f"{SAVE_DIR}/labels/mask_{frame_idx:05d}.png"
+                # Compute percent of car pixels in frame
+                car_pixel_ratio = car_mask.sum() / (car_mask.shape[0] * car_mask.shape[1])
+
+                # Trigger only if above threshold
+                THRESHOLD = 0.0 # 5% of frame area (adjust this as needed)
+
+                if car_pixel_ratio > THRESHOLD:
+                    print(f"🚗 Car detected ({car_pixel_ratio*100:.2f}% of frame) — processing...")
+                    frame_path = f"{SAVE_DIR}/frames/frame_{frame_idx:05d}(night)(GX010084).png"
                     cv2.imwrite(frame_path, frame)
-                    # Save the binary car mask (0 or 255)
-                    cv2.imwrite(mask_path, car_mask * 255)
-                    print(f"💾 Saved frame {frame_idx}/{total_frames}: {frame_path} (car detected: {car_mask.sum()} pixels)")
+                    cv2.imwrite(f"{SAVE_DIR}/labels/mask_{frame_idx:05d}(night)(GX010084).png", mask_resized)
+
+
+                    # classify(frame)
                 else:
-                    print(f"⏭️  Skipped frame {frame_idx}/{total_frames}: No car detected")
+                    print(f"⏭️  Skipped frame {frame_idx}: only {car_pixel_ratio*100:.2f}% car coverage")
+                # if car_mask.sum() > 0:
+                #     frame_path = f"{SAVE_DIR}/frames/frame_{frame_idx:05d}.png"
+                #     mask_path = f"{SAVE_DIR}/labels/mask_{frame_idx:05d}.png"
+                #     cv2.imwrite(frame_path, frame)
+                #     # Save the binary car mask (0 or 255)
+                #     # cv2.imwrite(mask_path, car_mask * 255)
+                #     print(f"💾 Saved frame {frame_idx}/{total_frames}: {frame_path} (car detected: {car_mask.sum()} pixels)")
+                # else:
+                #     print(f"⏭️  Skipped frame {frame_idx}/{total_frames}: No car detected")
 
             frame_idx += 1
 
@@ -255,3 +271,5 @@ if __name__ == "__main__":
         asyncio.run(stream_and_segment_livestream())
     else:
         print(f"❌ Invalid MODE: {MODE}. Use 'video' or 'livestream'")
+
+
