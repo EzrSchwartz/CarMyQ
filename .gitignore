@@ -22,6 +22,7 @@ dist/
 build/
 .eggs/
 pip-wheel-metadata/
+.png
 
 # === Jupyter and Cache Files ===
 .ipynb_checkpoints
