@@ -4,7 +4,7 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import json
 from simplefunctions import writeJson,readJson
-
+import asyncio
 HOST = "0.0.0.0"
 PORT = 8000
 command = "NONE" # Global variable
@@ -50,10 +50,8 @@ class RequestHandler(BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(b"OK")
 
-def run_server():
+async def run_server():
     server = HTTPServer((HOST, PORT), RequestHandler)
     print(f"Server running on {HOST}:{PORT}")
     server.serve_forever()
 
-if __name__ == "__main__":
-    run_server()

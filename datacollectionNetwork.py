@@ -18,14 +18,6 @@ from resnetclassification import classify
 # CONFIGURATION
 # ==============================
 
-<<<<<<< HEAD
-# Car class ID in ADE20K dataset (class 21 is 'car')
-CAR_CLASS_ID = 13
-
-# Choose mode: "livestream" or "video"
-MODE = "video"  # Change to "livestream" for GoPro streaming
-VIDEO_PATH = r'C:\Users\ezran\Desktop\GX010082.MP4'  # Path to your MP4 file
-=======
 extractor = AutoImageProcessor.from_pretrained("nvidia/segformer-b0-finetuned-cityscapes-1024-1024")
 model = AutoModelForSemanticSegmentation.from_pretrained("nvidia/segformer-b0-finetuned-cityscapes-1024-1024")
 CAR_CLASS_ID = 13  # for Cityscapes, class 13 = car
@@ -33,7 +25,6 @@ CAR_CLASS_ID = 13  # for Cityscapes, class 13 = car
 # Choose mode: "livestream" or "video"
 MODE = "video"  # Change to "livestream" for GoPro streaming
 VIDEO_PATH = r'c:\Users\ezran\OneDrive\Desktop\GX010084.MP4' # Path to your MP4 file
->>>>>>> 7457c5321f7e854c380d04e199888891686592b1
 
 SAVE_DIR = "D:\VehiclesData\Other"
 IMG_SIZE = (256, 256)  # must match your model's input size
@@ -58,6 +49,8 @@ os.makedirs(f"{SAVE_DIR}/labels", exist_ok=True)
 # ==============================
 # STREAM + SEGMENT
 # ==============================
+
+
 async def stream_and_segment_livestream():
     """Process GoPro livestream"""
     async with WiredGoPro() as gopro:

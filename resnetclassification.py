@@ -4,6 +4,23 @@ import torch.nn.functional as F
 from torchvision import transforms
 from PIL import Image
 import numpy as np
+from simplefunctions import writeJson
+
+
+async def triggerLoop():
+    count = 0
+
+    for i in range(30):
+        readJson("LastClassifiedCar")
+        if readJson("LastClassifiedCar") == "prius":
+            count += 1
+        time.sleep(1)
+
+
+    if count > 25:
+        triggerDoor()
+        count = 25
+        time.sleep(60*5)
 
 class Bottleneck(nn.Module):
     expansion = 4
@@ -169,4 +186,5 @@ def classify(frame):
     class_names = ['prius', 'Connie', 'e63', 'other']
     predicted_label = class_names[predicted.item()]
 
-    return predicted_label
+    writeJson("LastClassifiedCar", predicted_label)
+    asyncio.run(triggerLoop())
