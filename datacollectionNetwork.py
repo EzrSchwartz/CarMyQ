@@ -24,7 +24,7 @@ CAR_CLASS_ID = 13  # for Cityscapes, class 13 = car
 
 # Choose mode: "livestream" or "video"
 MODE = "video"  # Change to "livestream" for GoPro streaming
-VIDEO_PATH = r'c:\Users\ezran\OneDrive\Desktop\GX020089.MP4' # Path to your MP4 file
+VIDEO_PATH = r'c:\Users\ezran\OneDrive\Desktop\GX010084.MP4' # Path to your MP4 file
 
 SAVE_DIR = "D:\VehiclesData\Other"
 IMG_SIZE = (256, 256)  # must match your model's input size
@@ -118,7 +118,7 @@ async def stream_and_segment_livestream():
                     cv2.imshow('Segmented Stream', frame)
 
                 # --- Save every Nth frame (only if car is detected) ---
-                if frame_idx % SAVE_INTERVAL == 0:
+                if frame_idx % SAVE_INTERVAL == 5:
                     # Only save if car is detected in the frame
                     if car_mask.sum() > 0:
                         classify(frame)
@@ -223,9 +223,9 @@ def process_video_file():
 
                 if car_pixel_ratio > THRESHOLD:
                     print(f"🚗 Car detected ({car_pixel_ratio*100:.2f}% of frame) — processing...")
-                    frame_path = f"{SAVE_DIR}/frames/frame_{frame_idx:05d}(night)(GX020089).png"
+                    frame_path = f"{SAVE_DIR}/frames/frame_{frame_idx:05d}(night)(GX010084).png"
                     cv2.imwrite(frame_path, frame)
-                    cv2.imwrite(f"{SAVE_DIR}/labels/mask_{frame_idx:05d}(night)(GX020089).png", mask_resized)
+                    cv2.imwrite(f"{SAVE_DIR}/labels/mask_{frame_idx:05d}(night)(GX010084).png", mask_resized)
 
 
                     # classify(frame)

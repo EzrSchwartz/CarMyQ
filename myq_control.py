@@ -6,7 +6,8 @@ Provides functionality to connect to and control MyQ garage doors
 import asyncio
 from typing import Optional, List, Dict
 from pymyq import login
-from pymyq.errors import MyQError, RequestError
+from aiohttp import ClientSession
+
 
 
 class MyQController:
@@ -26,22 +27,20 @@ class MyQController:
         self.devices = {}
 
     async def connect(self) -> bool:
-        """
-        Connect to MyQ account
-
-        Returns:
-            True if connection successful, False otherwise
-        """
+        """Connect to MyQ API and fetch devices"""
         try:
-            self.myq = await login(self.email, self.password)
-            self.devices = await self.myq.get_devices()
-            print(f"Connected to MyQ. Found {len(self.devices)} device(s)")
-            return True
-        except MyQError as e:
-            print(f"MyQ error during connection: {e}")
-            return False
-        except RequestError as e:
-            print(f"Request error during connection: {e}")
+            # In pymyq 3.x, use websession parameter
+            async with ClientSession() as websession:
+                print(f"Attempting to connect to MyQ with email: {self.email}")
+                self.myq = await login(self.email, self.password, websession=websession)
+
+                # Access devices directly from the API object
+                self.devices = self.myq.devices
+                print(f"Connected to MyQ. Found {len(self.devices)} device(s)")
+                return True
+        except Exception as e:
+            print(f"Error during connection: {e}")
+            print(f"Error type: {type(e).__name__}")
             return False
 
     async def disconnect(self):
@@ -198,9 +197,12 @@ class MyQController:
 
 
 async def main():
-    """Example usage of MyQController"""
-    # Replace with your MyQ credentials
     import os
+
+    """Example usage of MyQController"""
+    os.environ['MYQ_EMAIL'] = 'adam.m.schwartz@gmail.com'
+    os.environ['MYQ_PASSWORD'] = 'Myq!2358'
+    # Replace with your MyQ credentials
     EMAIL = os.environ.get("MYQ_EMAIL", "example")
     PASSWORD = os.environ.get("MYQ_PASSWORD")
     if not PASSWORD:

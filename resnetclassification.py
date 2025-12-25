@@ -1,7 +1,9 @@
 import torch
 import torch.nn as  nn
 import torch.nn.functional as F
-
+from torchvision import transforms
+from PIL import Image
+import numpy as np
 
 class Bottleneck(nn.Module):
     expansion = 4
@@ -142,9 +144,7 @@ def classify(frame):
     Returns:
         str: Predicted class label.
     """
-    from torchvision import transforms
-    from PIL import Image
-    import numpy as np
+
 
     # Preprocess the frame
     preprocess = transforms.Compose([
