@@ -19,11 +19,11 @@ extractor = SegformerFeatureExtractor.from_pretrained("nvidia/segformer-b0-finet
 model = SegformerForSemanticSegmentation.from_pretrained("nvidia/segformer-b0-finetuned-ade-512-512")
 
 # Car class ID in ADE20K dataset (class 21 is 'car')
-CAR_CLASS_ID = 21
+CAR_CLASS_ID = 13
 
 # Choose mode: "livestream" or "video"
 MODE = "video"  # Change to "livestream" for GoPro streaming
-VIDEO_PATH = "path/to/your/video.mp4"  # Path to your MP4 file
+VIDEO_PATH = r'C:\Users\ezran\Desktop\GX010082.MP4'  # Path to your MP4 file
 
 SAVE_DIR = "segmented_gopro_dataset"
 IMG_SIZE = (256, 256)  # must match your model's input size
