@@ -16,6 +16,5 @@ def readJson(field):
         current_data = json.load(f)
     return current_data[field]
             
-def doortrigger():
+def triggerDoor():
     writeJson("command", "ACTIVATE")
-doortrigger()

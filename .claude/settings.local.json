@@ -5,7 +5,8 @@
       "Bash(python -c \"from open_gopro.models import constants; print([m for m in dir(constants) if ''Param'' in m or ''Toggle'' in m])\")",
       "Bash(python -c \"from open_gopro import WiredGoPro; from open_gopro.models.constants import Toggle; import cv2; print(''All imports successful!'')\")",
       "Bash(python MyqTesting.py:*)",
-      "Bash(pip install:*)"
+      "Bash(pip install:*)",
+      "Bash(python:*)"
     ],
     "deny": [],
     "ask": []

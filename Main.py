@@ -1,9 +1,11 @@
-from simplefunctions import triggerDoor, readJson, writeJson
-from MyQServer import run_server
-from datacollectionNetwork import stream_and_segment_livestream
 import asyncio
-import time
+from MyQServer import run_server
+from Segment import StreamSegment
 
-asyncio.run(stream_and_segment_livestream())
+async def main():
+    await asyncio.gather(
+        StreamSegment()
+        # ,run_server()
+    )
 
-asyncio.run(run_server())
+asyncio.run(main())

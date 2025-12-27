@@ -5,6 +5,10 @@ from torchvision import transforms
 from PIL import Image
 import numpy as np
 from simplefunctions import writeJson
+from simplefunctions import readJson
+import asyncio
+from simplefunctions import triggerDoor
+import time
 
 
 async def triggerLoop():
