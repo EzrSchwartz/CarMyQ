@@ -1,0 +1,53 @@
+#include "esp_camera.h"
+#include <WiFi.h>
+#include <HTTPClient.h>
+
+const char* ssid = "YOUR_WIFI_SSID";
+const char* password = "YOUR_WIFI_PASSWORD";
+const char* serverUrl = "192.168.1.xx"; // Change to your PC's IP
+
+void setup() {
+  Serial.begin(115200);
+  WiFi.begin(ssid, password);
+  while (WiFi.status() != WL_CONNECTED) delay(500);
+
+  // Camera configuration for XIAO ESP32S3 Sense
+  camera_config_t config;
+  config.ledc_channel = LEDC_CHANNEL_0;
+  config.ledc_timer = LEDC_TIMER_0;
+  config.pin_d0 = 15; config.pin_d1 = 17; config.pin_d2 = 18; config.pin_d3 = 16;
+  config.pin_d4 = 14; config.pin_d5 = 12; config.pin_d6 = 11; config.pin_d7 = 48;
+  config.pin_xclk = 10; config.pin_pclk = 13; config.pin_vsync = 38;
+  config.pin_href = 47; config.pin_sscb_sda = 40; config.pin_sscb_scl = 39;
+  config.pin_pwdn = -1; config.pin_reset = -1;
+  config.xclk_freq_hz = 20000000;
+  config.pixel_format = PIXFORMAT_JPEG;
+  config.frame_size = FRAMESIZE_VGA; // 640x480
+  config.jpeg_quality = 12;
+  config.fb_count = 1;
+
+  if (esp_camera_init(&config) != ESP_OK) {
+    Serial.println("Camera Init Failed");
+    return;
+  }
+}
+
+void loop() {
+  camera_fb_t * fb = esp_camera_fb_get();
+  if (!fb) return;
+
+  if (WiFi.status() == WL_CONNECTED) {
+    HTTPClient http;
+    http.begin(serverUrl);
+    http.addHeader("Content-Type", "image/jpeg");
+    
+    int httpResponseCode = http.POST(fb->buf, fb->len);
+    if (httpResponseCode > 0) {
+      Serial.printf("Response: %d\n", httpResponseCode);
+    }
+    http.end();
+  }
+  
+  esp_camera_fb_return(fb);
+  delay(5000); // Send one image every 5 seconds
+}
