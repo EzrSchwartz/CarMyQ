@@ -22,14 +22,13 @@ extractor = AutoImageProcessor.from_pretrained("nvidia/segformer-b0-finetuned-ci
 model = AutoModelForSemanticSegmentation.from_pretrained("nvidia/segformer-b0-finetuned-cityscapes-1024-1024")
 CAR_CLASS_ID = 13  # for Cityscapes, class 13 = car
 
-# Choose mode: "livestream" or "video"
-MODE = "video"  # Change to "livestream" for GoPro streaming
-VIDEO_PATH = r'c:\Users\ezran\OneDrive\Desktop\GX010084.MP4' # Path to your MP4 file
+MODE = "video" 
+VIDEO_PATH = r'path'
 
 SAVE_DIR = "D:\VehiclesData\Other"
-IMG_SIZE = (256, 256)  # must match your model's input size
-SHOW_OVERLAY = True    # show real-time overlay
-SAVE_INTERVAL = 1     # save every Nth frame to limit data size
+IMG_SIZE = (256, 256)  
+SHOW_OVERLAY = True   
+SAVE_INTERVAL = 1   
 
 # ==============================
 # SETUP
@@ -163,20 +162,14 @@ def process_video_file():
                 print("✅ Finished processing video")
                 break
 
-            # --- Preprocess for Da ---
-            # Convert BGR to RGB (OpenCV uses BGR, model expects RGB)
             frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
             with torch.no_grad():
-                # Extract features and move to device
                 inputs = extractor(images=frame_rgb, return_tensors="pt")
                 pixel_values = inputs["pixel_values"].to(device)
 
-                # Run inference
                 outputs = model(pixel_values=pixel_values)
-                logits = outputs.logits  # (batch, num_classes, height, width)
-
-                # Upsample logits to original image size
+                logits = outputs.logits
                 upsampled_logits = torch.nn.functional.interpolate(
                     logits,
                     size=(frame.shape[0], frame.shape[1]),
@@ -184,8 +177,6 @@ def process_video_file():
                     align_corners=False
                 )
 
-                                # Get predicted class for each pixel
-                                # Convert logits to probabilities (softmax along class dimension)
                 probs = torch.nn.functional.softmax(upsampled_logits, dim=1)
 
                 # Extract the probability map for the "car" class
@@ -194,14 +185,7 @@ def process_video_file():
                 # Apply your confidence threshold (e.g., 0.8 = 80%)
                 CONF_THRESHOLD = 0.8
                 car_mask = (car_probs > CONF_THRESHOLD).astype(np.uint8)
-                # full_mask = upsampled_logits.argmax(dim=1).squeeze().cpu().numpy()
 
-            # --- Filter for car class only ---
-            # Create binary mask: 1 where car is detected, 0 otherwise
-            # car_mask = (full_mask == CAR_CLASS_ID).astype(np.uint8)
-
-            # --- Convert mask to uint8 for visualization ---
-            # Scale to 0-255 for better visibility
             mask_resized = car_mask * 255
 
             # --- Optional overlay ---

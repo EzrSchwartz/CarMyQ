@@ -1,60 +1,10 @@
-
-# import asyncio
-# from http.server import BaseHTTPRequestHandler, HTTPServer
-# import json
-# from simplefunctions import writeJson, readJson
-
-# HOST = "0.0.0.0"
-# PORT = 8000
-
-# class RequestHandler(BaseHTTPRequestHandler):
-#     def do_GET(self):
-#         if self.path == "/command":
-#             self.send_response(200)
-#             self.end_headers()
-
-#             command = readJson("command")
-#             self.wfile.write(command.encode())
-
-#             writeJson("command", "None")
-#             print(f"Sent command: {command}")
-
-#     def do_POST(self):
-#         content_length = int(self.headers['Content-Length'])
-#         post_data = self.rfile.read(content_length)
-
-#         try:
-#             data_received = json.loads(post_data)
-#             door_state = data_received.get("door_state", "unknown")
-#             print(f"Door state update: {door_state}")
-#             writeJson("DoorState", door_state)
-#         except json.JSONDecodeError:
-#             print("Invalid JSON received")
-
-#         self.send_response(200)
-#         self.end_headers()
-#         self.wfile.write(b"OK")
-
-
-# def start_server():
-#     server = HTTPServer((HOST, PORT), RequestHandler)
-#     print(f"Server running on {HOST}:{PORT}")
-#     server.serve_forever()
-
-
-# async def run_server():
-#     loop = asyncio.get_running_loop()
-#     await loop.run_in_executor(None, start_server)
-
-
-
 import asyncio
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import json
 from simplefunctions import writeJson, readJson
 from datetime import datetime
 import os
-from resnetclassification import classify
+from Segment import Segment
 HOST = "0.0.0.0"
 PORT = 8000
 
@@ -95,7 +45,7 @@ class RequestHandler(BaseHTTPRequestHandler):
                 self.end_headers()
                 self.wfile.write(b"Image received")
 
-                classify(filename)
+                Segment(filename)
                 return
             
             except Exception as e:
