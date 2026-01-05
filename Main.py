@@ -4,8 +4,8 @@ from Segment import StreamSegment
 
 async def main():
     await asyncio.gather(
-        StreamSegment()
-        # ,run_server()
+        # StreamSegment()
+        run_server()
     )
 
 asyncio.run(main())
