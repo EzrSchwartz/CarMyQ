@@ -1,11 +1,11 @@
 import asyncio
 from MyQServer import run_server
-from Segment import StreamSegment
+from resnetclassification import triggerLoop
 
 async def main():
     await asyncio.gather(
-        # StreamSegment()
-        run_server()
+        run_server(),
+        triggerLoop()
     )
 
 asyncio.run(main())

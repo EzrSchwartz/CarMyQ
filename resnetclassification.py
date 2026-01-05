@@ -25,6 +25,8 @@ async def triggerLoop():
         triggerDoor()
         count = 25
         time.sleep(60*5)
+    else:
+        pass
 
 class Bottleneck(nn.Module):
     expansion = 4
@@ -158,14 +160,6 @@ def ResNet152(num_classes, channels=3):
 
 
 def classify(frame):
-    """
-    Classifies the input frame using a pre-trained ResNet model.
-    Args:
-        frame (numpy.ndarray): Input image frame in BGR format.
-    Returns:
-        str: Predicted class label.
-    """
-
 
     # Preprocess the frame
     preprocess = transforms.Compose([
@@ -191,4 +185,4 @@ def classify(frame):
     predicted_label = class_names[predicted.item()]
 
     writeJson("LastClassifiedCar", predicted_label)
-    asyncio.run(triggerLoop())
+    

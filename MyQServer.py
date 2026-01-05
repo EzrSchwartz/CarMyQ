@@ -54,13 +54,13 @@ import json
 from simplefunctions import writeJson, readJson
 from datetime import datetime
 import os
-
+from resnetclassification import classify
 HOST = "0.0.0.0"
 PORT = 8000
 
 # Create images directory if it doesn't exist
 os.makedirs("images", exist_ok=True)
-
+count = 0
 class RequestHandler(BaseHTTPRequestHandler):
     def do_GET(self):
         if self.path == "/command":
@@ -94,6 +94,8 @@ class RequestHandler(BaseHTTPRequestHandler):
                 self.send_response(200)
                 self.end_headers()
                 self.wfile.write(b"Image received")
+
+                classify(filename)
                 return
             
             except Exception as e:
