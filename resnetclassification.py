@@ -23,7 +23,7 @@ async def triggerLoop():
 
     if count > 25:
         triggerDoor()
-        count = 25
+        count = 0
         time.sleep(60*5)
     else:
         pass

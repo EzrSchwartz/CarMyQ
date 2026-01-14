@@ -17,4 +17,7 @@ def readJson(field):
     return current_data[field]
             
 def triggerDoor():
-    writeJson("command", "ACTIVATE")
+    if readJson("DoorState") == "open":
+        writeJson("command", "ACTIVATE")
+    time.sleep(5)
+    writeJson("command", "NONE")
