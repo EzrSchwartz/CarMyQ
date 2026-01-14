@@ -185,4 +185,5 @@ def classify(frame):
     predicted_label = class_names[predicted.item()]
 
     writeJson("LastClassifiedCar", predicted_label)
+
     
