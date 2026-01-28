@@ -41,12 +41,21 @@ transform = transforms.Compose([
 
 
 
+def Segment(image_path: str):
+    try:
+        # 1️⃣ Check file exists
+        if not os.path.exists(image_path):
+            raise FileNotFoundError(f"File missing: {image_path}")
 
-def Segment(frame):
+        # 2️⃣ Load image
+        img = cv2.imread(image_path)
 
-        # --- Preprocess for Da ---
-        # Convert BGR to RGB (OpenCV uses BGR, model expects RGB)
-        frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        if img is None:
+            raise ValueError("cv2.imread returned None (corrupt or incomplete image)")
+
+        # 3️⃣ Convert safely
+        frame_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+
 
         with torch.no_grad():
             # Extract features and move to device
@@ -60,7 +69,7 @@ def Segment(frame):
             # Upsample logits to original image size
             upsampled_logits = torch.nn.functional.interpolate(
                 logits,
-                size=(frame.shape[0], frame.shape[1]),
+                size=(img.shape[0], img.shape[1]),
                 mode="bilinear",
                 align_corners=False
             )
@@ -77,7 +86,20 @@ def Segment(frame):
         mask_resized = car_mask * 255
 
         if car_mask.sum() > 0:
-            classify(frame)
+            classify(img)
+
+    
+        print(f"✓ Segmented {image_path} ({img.shape[1]}x{img.shape[0]})")
+
+    except Exception as e:
+        print(f"✗ Segment error: {e}")
+
+    finally:
+        # 4️⃣ Delete ONLY after processing
+        try:
+            os.remove(image_path)
+        except Exception as e:
+            print(f"⚠️ Could not delete image: {e}")
 
 
 

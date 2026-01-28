@@ -1,4 +1,5 @@
 {
     "command": "None",
-    "DoorState": "open"
+    "DoorState": "open",
+    "LastClassifiedCar": "other"
 }

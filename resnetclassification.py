@@ -173,15 +173,15 @@ def classify(frame):
     input_batch = input_tensor.unsqueeze(0)  # Create a mini-batch as expected by the model
 
     # Load pre-trained ResNet model
-    model = ResNet50(num_classes=4)  # Assuming 4 classes: 'prius', 'Connie', 'e63', 'other'
-    model.load_state_dict(torch.load('resnet_model.pth', map_location=torch.device('cpu')))
+    model = ResNet50(num_classes=2)  # Assuming 4 classes: 'prius', 'Connie', 'e63', 'other'
+    model.load_state_dict(torch.load('prius_detector.pth', map_location=torch.device('cpu')))
     model.eval()
 
     with torch.no_grad():
         output = model(input_batch)
         _, predicted = torch.max(output, 1)
 
-    class_names = ['prius', 'Connie', 'e63', 'other']
+    class_names = ['prius', 'other']
     predicted_label = class_names[predicted.item()]
 
     writeJson("LastClassifiedCar", predicted_label)
