@@ -46,6 +46,7 @@ class RequestHandler(BaseHTTPRequestHandler):
                 self.wfile.write(b"Image received")
 
                 Segment(filename)
+                os.remove(filename)
                 return
             
             except Exception as e:
